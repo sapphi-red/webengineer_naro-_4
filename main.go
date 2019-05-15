@@ -49,17 +49,16 @@ func main() {
 	}
 	fmt.Println("Connected!")
 
-	cityName := os.Args[1]
-	city := City{}
-	db.Get(&city, fmt.Sprintf("SELECT * FROM city WHERE Name='%s'", cityName))
-	
-	country := Country{}
-	db.Get(&country, fmt.Sprintf("SELECT * FROM country WHERE Code='%s'", city.CountryCode))
+	cities := []City{}
+	db.Select(&cities, "SELECT * FROM city WHERE CountryCode='JPN'")
 
-	fmt.Printf(
-		"%sの人口は%s全体の%.4f%%\n",
-		cityName,
-		country.Name,
-		float64(city.Population)/float64(country.Population)*100,
-	)
+	fmt.Println("日本の都市一覧")
+	for _, city := range cities {
+		fmt.Printf(
+			"都市名: %s, 人口: %d人\n",
+			city.Name,
+			city.Population,	
+		)
+	}
+	
 }
