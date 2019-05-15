@@ -33,6 +33,10 @@ func createSessionStore() *mysqlstore.MySQLStore {
 	return store
 }
 
+func createLoginRouter(e *echo.Echo) {
+	e.POST("/signup", postSignUpHandler)
+	e.POST("/login", postLoginHandler)
+}
 
 func postSignUpHandler(c echo.Context) error {
 	req := LoginRequestBody{}
