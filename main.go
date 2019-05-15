@@ -49,12 +49,6 @@ func main() {
 	}
 	fmt.Println("Connected!")
 
-	db.MustExec(
-		`INSERT INTO city (Name, CountryCode, District, Population) VALUES (?, ?, ?, ?)`,
-		"oookayama",
-		"JPN",
-		"Tokyo",
-		2147483647,
-	)
+	db.MustExec(`DELETE FROM city WHERE Name=?`, "oookayama")
 	
 }
