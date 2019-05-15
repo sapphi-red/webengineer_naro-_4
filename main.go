@@ -49,16 +49,12 @@ func main() {
 	}
 	fmt.Println("Connected!")
 
-	cities := []City{}
-	db.Select(&cities, "SELECT * FROM city WHERE CountryCode='JPN'")
-
-	fmt.Println("日本の都市一覧")
-	for _, city := range cities {
-		fmt.Printf(
-			"都市名: %s, 人口: %d人\n",
-			city.Name,
-			city.Population,	
-		)
-	}
+	db.MustExec(
+		`INSERT INTO city (Name, CountryCode, District, Population) VALUES (?, ?, ?, ?)`,
+		"oookayama",
+		"JPN",
+		"Tokyo",
+		2147483647,
+	)
 	
 }
