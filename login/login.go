@@ -22,12 +22,15 @@ type User struct {
 	HashedPass string `json:"-"  db:"HashedPass"`
 }
 
+const USERNAME_MAX_LENGTH = 30
+const PASSWORD_MAX_LENGTH = 72
+
 func CreateSessionStore(db *sqlx.DB) *mysqlstore.MySQLStore {
 	store, err := mysqlstore.NewMySQLStoreFromConnection(
 		db.DB,
 		"sessions",
 		"/",
-		60*60*24*14,
+		60 * 60 * 24 * 14,
 		[]byte("secret-token"),
 	)
 	if err != nil {
@@ -45,14 +48,14 @@ func validateInputs(req LoginRequestBody) error {
 	if req.Username == "" {
 		return errors.New("ユーザー名が空です")
 	}
-	if len(req.Username) > 30 {
+	if len(req.Username) > USERNAME_MAX_LENGTH {
 		return errors.New("ユーザー名が長すぎます")
 	}
 
 	if req.Password == "" {
 		return errors.New("パスワードが空です")
 	}
-	if len(req.Password) > 72 {
+	if len(req.Password) > PASSWORD_MAX_LENGTH {
 		return errors.New("パスワードが長すぎます")
 	}
 	return nil
