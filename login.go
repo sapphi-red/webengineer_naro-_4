@@ -46,7 +46,7 @@ func validateInputs(req LoginRequestBody) error {
 	if len(req.Username) > 30 {
 		return errors.New("ユーザー名が長すぎます")
 	}
-	
+
 	if req.Password == "" {
 		return errors.New("パスワードが空です")
 	}
@@ -73,7 +73,7 @@ func postSignUpHandler(c echo.Context) error {
 	var count int
 	err = db.Get(&count, `SELECT COUNT(*) FROM users WHERE Username = ?`, req.Username)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, fmt.Sprintf("db error: %v", err))
+		return returnDBError(c, err)
 	}
 
 	if count > 0 {
@@ -86,7 +86,7 @@ func postSignUpHandler(c echo.Context) error {
 		hashedPass,
 	)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, fmt.Sprintf("db error: %v", err))
+		return returnDBError(c, err)
 	}
 
 	return c.NoContent(http.StatusCreated)
@@ -103,22 +103,21 @@ func postLoginHandler(c echo.Context) error {
 		req.Username,
 	)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, fmt.Sprintf("db error: %v", err))
+		return returnDBError(c, err)
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.HashedPass), []byte(req.Password))
 	if err != nil {
 		if err == bcrypt.ErrMismatchedHashAndPassword {
 			return c.NoContent(http.StatusForbidden)
-		} else {
-			return c.NoContent(http.StatusInternalServerError)
 		}
+		return c.NoContent(http.StatusInternalServerError)
 	}
 
 	sess, err := session.Get("sessions", c)
 	if err != nil {
 		fmt.Println(err)
-		return c.String(http.StatusInternalServerError, "something wrong in getting session")
+		return return500(c, errors.New("something wrong in getting session"))
 	}
 	sess.Values["userName"] = req.Username
 	sess.Save(c.Request(), c.Response())
@@ -131,7 +130,7 @@ func checkLogin(next echo.HandlerFunc) echo.HandlerFunc {
 		sess, err := session.Get("sessions", c)
 		if err != nil {
 			fmt.Println(err)
-			return c.String(http.StatusInternalServerError, "something wrong in getting session")
+			return return500(c, errors.New("something wrong in getting session"))
 		}
 
 		if sess.Values["userName"] == nil {

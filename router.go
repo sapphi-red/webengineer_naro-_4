@@ -43,15 +43,9 @@ func postCityInfoHandler(c echo.Context) error {
 
 	err = addCity(data)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, ResponseData{
-			Type:    "Error",
-			Content: "SQL Error",
-		})
+		return returnErrorJSON(c, "SQL Error")
 	}
-	return c.JSON(http.StatusOK, ResponseData{
-		Type:    "Success",
-		Content: "Success",
-	})
+	return returnSucessJSON(c)
 }
 
 func deleteCityInfoHandler(c echo.Context) error {
@@ -59,13 +53,7 @@ func deleteCityInfoHandler(c echo.Context) error {
 
 	err := deleteCity(cityName)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, ResponseData{
-			Type:    "Error",
-			Content: "SQL Error",
-		})
+		return returnErrorJSON(c, "SQL Error")
 	}
-	return c.JSON(http.StatusOK, ResponseData{
-		Type:    "Success",
-		Content: "Success",
-	})
+	return returnSucessJSON(c)
 }
