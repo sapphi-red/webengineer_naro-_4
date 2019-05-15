@@ -24,6 +24,7 @@ type User struct {
 
 const USERNAME_MAX_LENGTH = 30
 const PASSWORD_MAX_LENGTH = 72
+const PEPPER = "すごすごーい"
 
 func CreateSessionStore(db *sqlx.DB) *mysqlstore.MySQLStore {
 	store, err := mysqlstore.NewMySQLStoreFromConnection(
@@ -42,6 +43,22 @@ func CreateSessionStore(db *sqlx.DB) *mysqlstore.MySQLStore {
 func CreateLoginRouter(e *echo.Echo, db *sqlx.DB) {
 	e.POST("/signup", makePostSignUpHandler(db))
 	e.POST("/login", makePostLoginHandler(db))
+}
+
+func addSaltAndPepper(username, password string) string {
+	if len(password) > PASSWORD_MAX_LENGTH {
+		return password
+	}
+
+	newPassword := username + password
+	if len(newPassword) > PASSWORD_MAX_LENGTH {
+		return newPassword[:PASSWORD_MAX_LENGTH]
+	}
+	newPassword = newPassword + PEPPER
+	if len(newPassword) > PASSWORD_MAX_LENGTH {
+		return newPassword[:PASSWORD_MAX_LENGTH]
+	}
+	return newPassword
 }
 
 func validateInputs(req LoginRequestBody) error {
@@ -71,7 +88,7 @@ func makePostSignUpHandler(db *sqlx.DB) func(c echo.Context) error {
 			return util.Return400(c, err)
 		}
 
-		hashedPass, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+		hashedPass, err := bcrypt.GenerateFromPassword([]byte(addSaltAndPepper(req.Password, req.Username)), bcrypt.DefaultCost)
 		if err != nil {
 			return c.String(http.StatusInternalServerError, fmt.Sprintf("bcrypt generate error: %v", err))
 		}
@@ -114,7 +131,7 @@ func makePostLoginHandler(db *sqlx.DB) func(c echo.Context) error {
 			return util.ReturnDBError(c, err)
 		}
 
-		err = bcrypt.CompareHashAndPassword([]byte(user.HashedPass), []byte(req.Password))
+		err = bcrypt.CompareHashAndPassword([]byte(user.HashedPass), []byte(addSaltAndPepper(req.Password, req.Username)))
 		if err != nil {
 			if err == bcrypt.ErrMismatchedHashAndPassword {
 				return c.NoContent(http.StatusForbidden)
