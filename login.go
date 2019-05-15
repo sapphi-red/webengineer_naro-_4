@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"github.com/labstack/echo-contrib/session"
 	"fmt"
 	"golang.org/x/crypto/bcrypt"
@@ -38,16 +39,32 @@ func createLoginRouter(e *echo.Echo) {
 	e.POST("/login", postLoginHandler)
 }
 
+func validateInputs(req LoginRequestBody) error {
+	if req.Username == "" {
+		return errors.New("ユーザー名が空です")
+	}
+	if len(req.Username) > 30 {
+		return errors.New("ユーザー名が長すぎます")
+	}
+	
+	if req.Password == "" {
+		return errors.New("パスワードが空です")
+	}
+	if len(req.Password) > 72 {
+		return errors.New("パスワードが長すぎます")
+	}
+	return nil
+}
+
 func postSignUpHandler(c echo.Context) error {
 	req := LoginRequestBody{}
 	c.Bind(&req)
 
-	// Todo: more validation
-	if req.Password == "" || req.Username == "" {
-		// Todo: better error
-		return c.String(http.StatusBadRequest, "項目が空です")
+	err := validateInputs(req)
+	if err != nil {
+		return return400(c, err)
 	}
-
+	
 	hashedPass, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("bcrypt generate error: %v", err))
