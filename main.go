@@ -1,6 +1,8 @@
 package main
 
 import (
+	"net/http"
+	"github.com/labstack/echo"
 	"fmt"
 	"log"
 	"os"
@@ -35,8 +37,12 @@ type City struct {
 	Population  int    `json:"population,omitempty"  db:"Population"`
 }
 
+var (
+	db	*sqlx.DB
+)
+
 func main() {
-	db, err := sqlx.Connect("mysql", fmt.Sprintf(
+	_db, err := sqlx.Connect("mysql", fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
 		os.Getenv("DB_USERNAME"),
 		os.Getenv("DB_PASSWORD"),
@@ -47,8 +53,31 @@ func main() {
 	if err != nil {
 		log.Fatalf("Cannot Connect to Database: %s", err)
 	}
-	fmt.Println("Connected!")
+	db = _db
 
-	db.MustExec(`DELETE FROM city WHERE Name=?`, "oookayama")
-	
+	e := echo.New()
+
+	e.GET("/", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Hello World!")
+	})
+	e.GET("/cities/:cityName", getCityInfoHandler)
+
+	e.Start(":12100")
+}
+
+func getCityInfoHandler(c echo.Context) error {
+	cityName := c.Param("cityName")
+	fmt.Println(cityName)
+
+	city := City{}
+	db.Get(
+		&city,
+		"SELECT * FROM city WHERE Name = ?",
+		cityName,
+	)
+	if city.Name == "" {
+		return c.NoContent(http.StatusNotFound)
+	}
+
+	return c.JSON(http.StatusOK, city)
 }
