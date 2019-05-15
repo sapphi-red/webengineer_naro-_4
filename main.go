@@ -23,7 +23,7 @@ type Country struct {
 	LocalName      string  `json:"localName,omitempty"  db:"LocalName"`
 	GovernmentForm string  `json:"governmentForm,omitempty"  db:"GovernmentForm"`
 	HeadOfState    string  `json:"headOfState,omitempty"  db:"HeadOfState"`
-	Captital       int     `json:"captital,omitempty"  db:"Captital"`
+	Capital       int     `json:"capital,omitempty"  db:"Capital"`
 	Code2          string  `json:"code2,omitempty"  db:"Code2"`
 }
 
@@ -52,18 +52,14 @@ func main() {
 	cityName := os.Args[1]
 	city := City{}
 	db.Get(&city, fmt.Sprintf("SELECT * FROM city WHERE Name='%s'", cityName))
-
+	
 	country := Country{}
 	db.Get(&country, fmt.Sprintf("SELECT * FROM country WHERE Code='%s'", city.CountryCode))
 
-	fmt.Printf("%v\n", country)
-	/*
 	fmt.Printf(
-		"%sの人口は%s全体の%d%%\n",
+		"%sの人口は%s全体の%.4f%%\n",
 		cityName,
 		country.Name,
-		city.Population/country.Population*100,
+		float64(city.Population)/float64(country.Population)*100,
 	)
-	*/
-
 }
