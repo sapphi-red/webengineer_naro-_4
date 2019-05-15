@@ -69,12 +69,13 @@ func main() {
 
 	e.POST("/cities", postCityInfoHandler)
 
+	e.DELETE("/cities/:cityName", deleteCityInfoHandler)
+
 	e.Start(":12100")
 }
 
 func getCityInfoHandler(c echo.Context) error {
 	cityName := c.Param("cityName")
-	fmt.Println(cityName)
 
 	city := City{}
 	db.Get(
@@ -109,11 +110,30 @@ func postCityInfoHandler(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, ResponseData{
 			Type: "Error",
-			Content: fmt.Sprintf("%v", err), //"SQL Error",
+			Content: "SQL Error",
 		})
 	}
 	return c.JSON(http.StatusOK, ResponseData{
 		Type: "Success",
 		Content: "Success",
 	})
+}
+
+func deleteCityInfoHandler(c echo.Context) error {
+	cityName := c.Param("cityName")
+
+	_, err := db.Exec(
+		`DELETE FROM city WHERE Name = ?`,
+		cityName,
+	)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, ResponseData{
+			Type: "Error",
+			Content: "SQL Error",
+		})
+	}
+	return c.JSON(http.StatusOK, ResponseData{
+		Type: "Success",
+		Content: "Success",
+	})	
 }
