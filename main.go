@@ -6,17 +6,16 @@ import (
 	"github.com/labstack/echo/middleware"
 	"net/http"
 
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/jmoiron/sqlx"
-)
+	"github.com/sapphi-red/webengineer_naro-_4/router"
+	"github.com/sapphi-red/webengineer_naro-_4/login"
+	"github.com/sapphi-red/webengineer_naro-_4/database"
 
-var (
-	db *sqlx.DB
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
-	db = connectDB()
-	store := createSessionStore()
+	db := database.ConnectDB()
+	store := login.CreateSessionStore(db)
 
 	e := echo.New()
 	e.Use(middleware.Logger())
@@ -29,8 +28,11 @@ func main() {
 		return c.String(http.StatusOK, "pong")
 	})
 
-	createLoginRouter(e)
-	createRoutes(e)
+	login.CreateLoginRouter(e, db)
+
+	withLogin := e.Group("")
+	withLogin.Use(login.CheckLogin)
+	router.CreateRoutes(withLogin)
 
 	e.Start(":12100")
 }

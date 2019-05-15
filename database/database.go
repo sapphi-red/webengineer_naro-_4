@@ -1,4 +1,4 @@
-package main
+package database
 
 import (
 	"log"
@@ -33,7 +33,11 @@ type City struct {
 	Population  int    `json:"population,omitempty"  db:"Population"`
 }
 
-func connectDB() *sqlx.DB {
+var (
+	db *sqlx.DB
+)
+
+func ConnectDB() *sqlx.DB {
 	db, err := sqlx.Connect("mysql", fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
 		os.Getenv("DB_USERNAME"),
@@ -48,7 +52,7 @@ func connectDB() *sqlx.DB {
 	return db
 }
 
-func getCity(name string) City {
+func GetCity(name string) City {
 	city := City{}
 	db.Get(
 		&city,
@@ -58,7 +62,7 @@ func getCity(name string) City {
 	return city
 }
 
-func addCity(city *City) error {
+func AddCity(city *City) error {
 	_, err := db.Exec(
 		`INSERT INTO city (Name, CountryCode, District, Population) VALUES (?, ?, ?, ?)`,
 		city.Name,
@@ -69,7 +73,7 @@ func addCity(city *City) error {
 	return err
 }
 
-func deleteCity(name string) error {
+func DeleteCity(name string) error {
 	_, err := db.Exec(
 		`DELETE FROM city WHERE Name = ?`,
 		name,
