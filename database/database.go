@@ -1,10 +1,10 @@
 package database
 
 import (
-	"log"
-	"os"
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	"log"
+	"os"
 )
 
 type Country struct {
@@ -78,5 +78,5 @@ func DeleteCity(name string) error {
 		`DELETE FROM city WHERE Name = ?`,
 		name,
 	)
-	return err;
+	return err
 }

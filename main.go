@@ -6,9 +6,9 @@ import (
 	"github.com/labstack/echo/middleware"
 	"net/http"
 
-	"github.com/sapphi-red/webengineer_naro-_4/router"
-	"github.com/sapphi-red/webengineer_naro-_4/login"
 	"github.com/sapphi-red/webengineer_naro-_4/database"
+	"github.com/sapphi-red/webengineer_naro-_4/login"
+	"github.com/sapphi-red/webengineer_naro-_4/router"
 
 	_ "github.com/go-sql-driver/mysql"
 )

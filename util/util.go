@@ -2,8 +2,8 @@ package util
 
 import (
 	"fmt"
-	"net/http"
 	"github.com/labstack/echo"
+	"net/http"
 )
 
 type ResponseData struct {

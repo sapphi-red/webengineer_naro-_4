@@ -1,8 +1,8 @@
 package router
 
 import (
-	"net/http"
 	"github.com/labstack/echo"
+	"net/http"
 
 	"github.com/sapphi-red/webengineer_naro-_4/database"
 	"github.com/sapphi-red/webengineer_naro-_4/util"
@@ -13,7 +13,6 @@ func CreateRoutes(e *echo.Group) {
 	e.POST("/cities", postCityInfoHandler)
 	e.DELETE("/cities/:cityName", deleteCityInfoHandler)
 }
-
 
 func getCityInfoHandler(c echo.Context) error {
 	cityName := c.Param("cityName")

@@ -1,15 +1,15 @@
 package login
 
 import (
-	"github.com/jmoiron/sqlx"
-	"github.com/sapphi-red/webengineer_naro-_4/util"
 	"errors"
-	"github.com/labstack/echo-contrib/session"
 	"fmt"
+	"github.com/jmoiron/sqlx"
+	"github.com/labstack/echo"
+	"github.com/labstack/echo-contrib/session"
+	"github.com/sapphi-red/webengineer_naro-_4/util"
+	"github.com/srinathgs/mysqlstore"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
-	"github.com/labstack/echo"
-	"github.com/srinathgs/mysqlstore"
 )
 
 type LoginRequestBody struct {
@@ -58,8 +58,8 @@ func validateInputs(req LoginRequestBody) error {
 	return nil
 }
 
-func makePostSignUpHandler(db *sqlx.DB) func (c echo.Context) error {
-  return func (c echo.Context) error {
+func makePostSignUpHandler(db *sqlx.DB) func(c echo.Context) error {
+	return func(c echo.Context) error {
 		req := LoginRequestBody{}
 		c.Bind(&req)
 
@@ -67,7 +67,7 @@ func makePostSignUpHandler(db *sqlx.DB) func (c echo.Context) error {
 		if err != nil {
 			return util.Return400(c, err)
 		}
-		
+
 		hashedPass, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 		if err != nil {
 			return c.String(http.StatusInternalServerError, fmt.Sprintf("bcrypt generate error: %v", err))
