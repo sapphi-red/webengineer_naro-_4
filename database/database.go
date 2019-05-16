@@ -93,7 +93,7 @@ func GetCountries() []Country {
 	countries := []Country{}
 	db.Select(
 		&countries,
-		`SELECT * FROM country`,
+		`SELECT Name FROM country`,
 	)
 	return countries
 }
@@ -102,7 +102,7 @@ func GetCountryCities(name string) []CountryCities {
 	countryCities := []CountryCities{}
 	db.Select(
 		&countryCities,
-		`SELECT country.Name AS Country, city.Name FROM country JOIN city ON country.Code=city.CountryCode WHERE country.Name = ?`,
+		`SELECT city.Name FROM country JOIN city ON country.Code=city.CountryCode WHERE country.Name = ?`,
 		name,
 	)
 	return countryCities
