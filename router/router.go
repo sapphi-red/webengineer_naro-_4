@@ -8,10 +8,22 @@ import (
 	"github.com/sapphi-red/webengineer_naro-_4/util"
 )
 
+type Me struct {
+	Username string `json:"username,omitempty"  db:"username"`
+}
+
 func CreateRoutes(e *echo.Group) {
+	e.GET("/whoami", getWhoAmIHandler)
+
 	e.GET("/cities/:cityName", getCityInfoHandler)
 	e.POST("/cities", postCityInfoHandler)
 	e.DELETE("/cities/:cityName", deleteCityInfoHandler)
+}
+
+func getWhoAmIHandler(c echo.Context) error {
+	return c.JSON(http.StatusOK, Me{
+		Username: c.Get("userName").(string),
+	})
 }
 
 func getCityInfoHandler(c echo.Context) error {
