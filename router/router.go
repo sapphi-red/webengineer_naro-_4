@@ -18,6 +18,9 @@ func CreateRoutes(e *echo.Group) {
 	e.GET("/cities/:cityName", getCityInfoHandler)
 	e.POST("/cities", postCityInfoHandler)
 	e.DELETE("/cities/:cityName", deleteCityInfoHandler)
+	
+	e.GET("/countries", getCountriesInfoHandler)
+	e.GET("/countries/:countryName", getCountryInfoHandler)
 }
 
 func getWhoAmIHandler(c echo.Context) error {
@@ -59,4 +62,20 @@ func deleteCityInfoHandler(c echo.Context) error {
 		return util.ReturnErrorJSON(c, "SQL Error")
 	}
 	return util.ReturnSucessJSON(c)
+}
+
+func getCountriesInfoHandler(c echo.Context) error {
+	countries := database.GetCountries()
+	return c.JSON(http.StatusOK, countries)
+}
+
+func getCountryInfoHandler(c echo.Context) error {
+	countryName := c.Param("countryName")
+
+	country := database.GetCountry(countryName)
+	if country.Name == "" {
+		return c.NoContent(http.StatusNotFound)
+	}
+
+	return c.JSON(http.StatusOK, country)
 }

@@ -33,6 +33,11 @@ type City struct {
 	Population  int    `json:"population,omitempty"  db:"Population"`
 }
 
+type CountryCities struct {
+	Country           string  `json:"country,omitempty"  db:"Country"`
+	Name           string  `json:"name,omitempty"  db:"Name"`
+}
+
 var (
 	db *sqlx.DB
 )
@@ -82,4 +87,23 @@ func DeleteCity(name string) error {
 		name,
 	)
 	return err
+}
+
+func GetCountries() []Country {
+	countries := []Country{}
+	db.Select(
+		&countries,
+		`SELECT * FROM country`,
+	)
+	return countries
+}
+
+func GetCountry(name string) CountryCities {
+	countryCities := CountryCities{}
+	db.Get(
+		&countryCities,
+		`SELECT country.Name AS Country, city.Name FROM country JOIN city ON country.Code=city.CountryCode WHERE country.Name === ?`,
+		name,
+	)
+	return countryCities
 }
