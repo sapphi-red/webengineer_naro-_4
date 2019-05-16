@@ -71,11 +71,6 @@ func getCountriesInfoHandler(c echo.Context) error {
 
 func getCountryInfoHandler(c echo.Context) error {
 	countryName := c.Param("countryName")
-
-	country := database.GetCountry(countryName)
-	if country.Name == "" {
-		return c.NoContent(http.StatusNotFound)
-	}
-
+	country := database.GetCountryCities(countryName)
 	return c.JSON(http.StatusOK, country)
 }

@@ -91,17 +91,16 @@ func DeleteCity(name string) error {
 
 func GetCountries() []Country {
 	countries := []Country{}
-	err := db.Select(
+	db.Select(
 		&countries,
 		`SELECT * FROM country`,
 	)
-	fmt.Printf("%v    %#v\n", err, countries)
 	return countries
 }
 
-func GetCountry(name string) CountryCities {
-	countryCities := CountryCities{}
-	db.Get(
+func GetCountryCities(name string) []CountryCities {
+	countryCities := []CountryCities{}
+	db.Select(
 		&countryCities,
 		`SELECT country.Name AS Country, city.Name FROM country JOIN city ON country.Code=city.CountryCode WHERE country.Name = ?`,
 		name,
