@@ -18,7 +18,7 @@ func CreateRoutes(e *echo.Group) {
 	e.GET("/cities/:cityName", getCityInfoHandler)
 	e.POST("/cities", postCityInfoHandler)
 	e.DELETE("/cities/:cityName", deleteCityInfoHandler)
-	
+
 	e.GET("/countries", getCountriesInfoHandler)
 	e.GET("/countries/:countryName", getCountryInfoHandler)
 }

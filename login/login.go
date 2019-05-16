@@ -31,7 +31,7 @@ func CreateSessionStore(db *sqlx.DB) *mysqlstore.MySQLStore {
 		db.DB,
 		"sessions",
 		"/",
-		60 * 60 * 24 * 14,
+		60*60*24*14,
 		[]byte("secret-token"),
 	)
 	if err != nil {
