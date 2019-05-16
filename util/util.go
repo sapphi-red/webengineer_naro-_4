@@ -30,7 +30,7 @@ func ReturnErrorJSON(c echo.Context, content string) error {
 	})
 }
 
-func ReturnSucessJSON(c echo.Context) error {
+func ReturnSuccessJSON(c echo.Context) error {
 	return c.JSON(http.StatusOK, ResponseData{
 		Type:    "Success",
 		Content: "Success",

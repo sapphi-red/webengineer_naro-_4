@@ -51,7 +51,7 @@ func postCityInfoHandler(c echo.Context) error {
 	if err != nil {
 		return util.ReturnErrorJSON(c, "SQL Error")
 	}
-	return util.ReturnSucessJSON(c)
+	return util.ReturnSuccessJSON(c)
 }
 
 func deleteCityInfoHandler(c echo.Context) error {
@@ -61,7 +61,7 @@ func deleteCityInfoHandler(c echo.Context) error {
 	if err != nil {
 		return util.ReturnErrorJSON(c, "SQL Error")
 	}
-	return util.ReturnSucessJSON(c)
+	return util.ReturnSuccessJSON(c)
 }
 
 func getCountriesInfoHandler(c echo.Context) error {
