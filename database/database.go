@@ -13,15 +13,15 @@ type Country struct {
 	Continent      string  `json:"continent,omitempty"  db:"Continent"`
 	Region         string  `json:"region,omitempty"  db:"Region"`
 	SurfaceArea    float64 `json:"surface_area,omitempty"  db:"SurfaceArea"`
-	IndepYear      int     `json:"indep_year,omitempty"  db:"IndepYear"`
+	IndepYear      *int    `json:"indep_year,omitempty"  db:"IndepYear"`
 	Population     int     `json:"population,omitempty"  db:"Population"`
-	LifeExpectancy float64 `json:"life_expectancy,omitempty"  db:"LifeExpectancy"`
-	GNP            float64 `json:"GNP,omitempty"  db:"GNP"`
-	GNPOld         float64 `json:"GNP_old,omitempty"  db:"GNPOld"`
+	LifeExpectancy *float64 `json:"life_expectancy,omitempty"  db:"LifeExpectancy"`
+	GNP            *float64 `json:"GNP,omitempty"  db:"GNP"`
+	GNPOld         *float64 `json:"GNP_old,omitempty"  db:"GNPOld"`
 	LocalName      string  `json:"local_name,omitempty"  db:"LocalName"`
 	GovernmentForm string  `json:"government_form,omitempty"  db:"GovernmentForm"`
-	HeadOfState    string  `json:"head_of_state,omitempty"  db:"HeadOfState"`
-	Capital        int     `json:"capital,omitempty"  db:"Capital"`
+	HeadOfState    *string  `json:"head_of_state,omitempty"  db:"HeadOfState"`
+	Capital        *int     `json:"capital,omitempty"  db:"Capital"`
 	Code2          string  `json:"code2,omitempty"  db:"Code2"`
 }
 
@@ -91,10 +91,11 @@ func DeleteCity(name string) error {
 
 func GetCountries() []Country {
 	countries := []Country{}
-	db.Select(
+	err := db.Select(
 		&countries,
 		`SELECT * FROM country`,
 	)
+	fmt.Printf("%v    %#v\n", err, countries)
 	return countries
 }
 
