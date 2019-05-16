@@ -38,7 +38,7 @@ var (
 )
 
 func ConnectDB() *sqlx.DB {
-	db, err := sqlx.Connect("mysql", fmt.Sprintf(
+	_db, err := sqlx.Connect("mysql", fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
 		os.Getenv("DB_USERNAME"),
 		os.Getenv("DB_PASSWORD"),
@@ -49,7 +49,10 @@ func ConnectDB() *sqlx.DB {
 	if err != nil {
 		log.Fatalf("Cannot Connect to Database: %s", err)
 	}
-	return db
+
+	db = _db
+
+	return _db
 }
 
 func GetCity(name string) City {
