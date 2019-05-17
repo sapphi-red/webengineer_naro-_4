@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/sapphi-red/webengineer_naro-_4/database"
-	"github.com/sapphi-red/webengineer_naro-_4/login"
 	"github.com/sapphi-red/webengineer_naro-_4/router"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -15,7 +14,7 @@ import (
 
 func main() {
 	db := database.ConnectDB()
-	store := login.CreateSessionStore(db)
+	store := database.CreateSessionStore()
 
 	e := echo.New()
 	e.Use(middleware.Logger())
@@ -28,11 +27,8 @@ func main() {
 		return c.String(http.StatusOK, "pong")
 	})
 
-	login.CreateLoginRouter(e, db)
-
-	withLogin := e.Group("")
-	withLogin.Use(login.CheckLogin)
-	router.CreateRoutes(withLogin)
+	router.CreateLoginRoutes(e, db)
+	router.CreateRoutes(e, db)
 
 	e.Start(":12100")
 }
