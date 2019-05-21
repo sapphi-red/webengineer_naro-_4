@@ -133,10 +133,23 @@ func (h loginHandler) Login(c echo.Context) error {
 	return c.NoContent(http.StatusOK)
 }
 
+func (h loginHandler) Logout(c echo.Context) error {
+	sess, err := session.Get("sessions", c)
+	if err != nil {
+		fmt.Println(err)
+		return return500(c, errors.New("something wrong in getting session"))
+	}
+	sess.Options.MaxAge = -1
+	sess.Save(c.Request(), c.Response())
+
+	return c.NoContent(http.StatusOK)
+}
+
 func CreateLoginRoutes(e *echo.Echo, db *sqlx.DB) {
 	handler := &loginHandler{db: db}
 	e.POST("/signup", handler.SignUp)
 	e.POST("/login", handler.Login)
+	e.POST("/logout", handler.Logout)
 }
 
 func checkLogin(next echo.HandlerFunc) echo.HandlerFunc {
